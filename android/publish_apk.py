@@ -7,10 +7,8 @@ is used to upload the apk to Bintray and Google Play.
 Workflow:
 
 - Fetch the latest apk (and changelog) from github release.
-- Upload apk to bintray
 - Upload apk to Google Play, and update the changelog
 
-Still in progress.
 """
 
 import argparse
@@ -21,7 +19,7 @@ import logging
 
 from utils import setup_logging, download_apk_file
 from utils.google_play import get_google_play_latest_release, google_play_upload
-from utils.github import get_github_latest_release, get_github_version_info
+from utils.github import get_github_version_info
 
 logger = logging.getLogger(__file__)
 
@@ -68,12 +66,9 @@ def main():
     args = parse_args()
     assert os.path.exists(args.json_keyfile)
 
-    if args.version:
-        version, version_code, changelog, apk_download_url = get_github_version_info(args.version)
-    else:
-        version, version_code, changelog, apk_download_url = get_github_latest_release()
-        logger.info('latest version on github: %s', version)
-        logger.info('latest version code on github: %s', version_code)
+    version, version_code, changelog, apk_download_url = get_github_version_info(args.version)
+    logger.info('latest version on github: %s', version)
+    logger.info('latest version code on github: %s', version_code)
 
     google_play_version_code = get_google_play_latest_release(args.json_keyfile, args.package_name)
     logger.info('latest published version code on google play: %s', google_play_version_code)

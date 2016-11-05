@@ -16,7 +16,7 @@ def _get_version_code(tag):
 
     raise RuntimeError('Failed to parse the versionCode from AndroidManifest.xml for tag {}'.format(tag))
 
-def get_github_latest_release(version=None):
+def get_github_version_info(version=None):
     """
     Returns a four tuple of (version, version_code, changelog, download_url)
     """
