@@ -1,0 +1,10 @@
+sudo: false
+# Must set language to python so we can install custom python pacakges in
+# docker-based travis builds
+language: python
+cache:
+  directories:
+    - $HOME/.cache/pip
+install: pip install --user -r requirements.txt
+script:
+ - ./android/publish_apk.py
