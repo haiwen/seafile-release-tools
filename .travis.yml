@@ -5,6 +5,8 @@ language: python
 cache:
   directories:
     - $HOME/.cache/pip
+before_install:
+  - openssl aes-256-cbc -K $encrypted_2d2605536f57_key -iv $encrypted_2d2605536f57_iv -in google-api-key.json.enc -out android/google-api-key.json -d
 install: pip install --user -r requirements.txt
 script:
  - ./android/publish_apk.py
