@@ -20,6 +20,7 @@ import logging
 from utils import setup_logging, download_apk_file
 from utils.google_play import get_google_play_latest_release, google_play_upload
 from utils.github import get_github_version_info
+from utils.qiniu_helper import QiniuClient
 
 logger = logging.getLogger(__file__)
 
@@ -66,6 +67,8 @@ def main():
     args = parse_args()
     assert os.path.exists(args.json_keyfile)
 
+    qiniu_client = QiniuClient(os.environ['QINIU_ACCESS_KEY'], os.environ['QINIU_SECRET_KEY'])
+
     version, version_code, changelog, apk_download_url = get_github_version_info(args.version)
     logger.info('latest version on github: %s', version)
     logger.info('latest version code on github: %s', version_code)
@@ -76,13 +79,20 @@ def main():
     google_play_version_code = int(google_play_version_code)
     version_code = int(version_code)
 
+    apk_file = None
+
     if google_play_version_code < version_code:
         if should_publish(args):
-            logger.info('Publishing latest release to google play')
             apk_file = download_apk_file(apk_download_url)
+            logger.info('Publishing latest release to google play')
             google_play_upload(apk_file, args.package_name, args.json_keyfile, changelog)
     else:
         logger.info('The version on google play is up to date.')
+
+    if should_publish(args):
+        logger.info('Publishing latest release to qiniu')
+        apk_file = apk_file or download_apk_file(apk_download_url)
+        qiniu_client.upload_file(apk_file)
 
 if __name__ == '__main__':
     setup_logging()
