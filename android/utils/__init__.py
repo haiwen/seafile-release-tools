@@ -10,8 +10,8 @@ logger = logging.getLogger(__file__)
 
 def setup_logging(level=logging.INFO):
     kw = {
-        # 'format': '[%(asctime)s][%(name)s][%(levelname)s]: %(message)s',
-        'format': '[%(asctime)s][%(module)s]: %(message)s',
+        'format': '[%(asctime)s][%(name)s][%(levelname)s]: %(message)s',
+        # 'format': '[%(asctime)s][%(module)s]: %(message)s',
         'datefmt': '%m/%d/%Y %H:%M:%S',
         'level': level,
         'stream': sys.stdout

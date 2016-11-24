@@ -21,6 +21,7 @@ from utils import setup_logging, download_apk_file
 from utils.google_play import get_google_play_latest_release, google_play_upload
 from utils.github import get_github_version_info
 from utils.qiniu_helper import QiniuClient
+from utils.slack_notify import send_slack_msg
 
 logger = logging.getLogger(__file__)
 
@@ -50,8 +51,8 @@ def parse_args():
     return argparser.parse_args()
 
 def should_publish(args):
-    if 'TRAVIS' in os.environ:
-        if 'TRAVIS_TAG' in os.environ:
+    if os.environ.get('TRAVIS', ''):
+        if os.environ.get('TRAVIS_TAG', ''):
             return True
         else:
             logger.info('skip publishing since current build is not triggered by a tag')
@@ -81,11 +82,15 @@ def main():
 
     apk_file = None
 
+    def notify_slack(msg):
+        send_slack_msg(msg, botname='android-travis-upload')
+
     if google_play_version_code < version_code:
         if should_publish(args):
             apk_file = download_apk_file(apk_download_url)
             logger.info('Publishing latest release to google play')
             google_play_upload(apk_file, args.package_name, args.json_keyfile, changelog)
+            notify_slack('Seafile apk <https://github.com/haiwen/seadroid/releases/tag/{version}|{version} (version code {version_code})> has been published to Google Play'.format(version=version, version_code=version_code))
     else:
         logger.info('The version on google play is up to date.')
 
@@ -93,6 +98,8 @@ def main():
         logger.info('Publishing latest release to qiniu')
         apk_file = apk_file or download_apk_file(apk_download_url)
         qiniu_client.upload_file(apk_file)
+        notify_slack('Seafile apk <https://github.com/haiwen/seadroid/releases/tag/{version}|{version} (version code {version_code})> has been published to qiniu'
+                     .format(version=version, version_code=version_code))
 
 if __name__ == '__main__':
     setup_logging()
