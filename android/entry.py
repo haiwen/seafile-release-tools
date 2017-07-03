@@ -46,10 +46,6 @@ def parse_args():
 
     return ap.parse_args()
 
-def error_and_exit(msg, code=1):
-    print('Error: ' + msg)
-    sys.exit(code)
-
 def read_android_changelog():
     # TODO: warn if changelog is not updated?
     fn = join(dirname(abspath(__file__)), 'changelog.md')
@@ -65,10 +61,26 @@ def get_travis_build_url():
         return f'https://travis-ci.org/{repo}/builds/{build_id}'
 
 def main():
-    args = parse_args()
     travis_tag = os.environ.get('TRAVIS_TAG', '')
     if not travis_tag:
-        error_and_exit('Not triggered by a tag, skip buildding', 0)
+        logger.warning('Not triggered by a tag, skip buildding')
+        sys.exit(0)
+
+    try:
+        _real_main(travis_tag)
+    except:
+        tag = os.environ.get('TRAVIS_TAG')
+        url = get_travis_build_url()
+        if url and tag:
+            msg = f'<{url}|seadroid release {tag}> build failed'
+        elif tag:
+            msg = f'seadroid release {tag} build failed'
+        else:
+            msg = 'seadroid build failed'
+        notify_slack(msg, blocktext=traceback.format_exc(), color='warning')
+
+def _real_main(travis_tag):
+    args = parse_args()
     m = PRE_RELEASE_PATTERN.match(travis_tag)
     prerelease = False
     if m:
@@ -80,7 +92,7 @@ def main():
             seadroid_tag = m.group(1)
 
     if not seadroid_tag:
-        error_and_exit('unknown tag ' + travis_tag)
+        raise RuntimeError(f'unknown tag {travis_tag}')
 
     releaser = GithubReleaser(args.repo)
 
@@ -115,15 +127,4 @@ if __name__ == '__main__':
         logger.info('running on travis ci')
     else:
         logger.info('running on local machine')
-    try:
-        main()
-    except:
-        tag = os.environ.get('TRAVIS_TAG')
-        url = get_travis_build_url()
-        if url and tag:
-            msg = f'<{url}|seadroid release {tag}> build failed'
-        elif tag:
-            msg = f'seadroid release {tag} build failed'
-        else:
-            msg = 'seadroid build failed'
-        notify_slack(msg, blocktext=traceback.format_exc(), color='warning')
+    main()
