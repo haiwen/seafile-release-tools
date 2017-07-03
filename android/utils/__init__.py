@@ -3,6 +3,8 @@ import os
 import shutil
 import sys
 import tempfile
+from contextlib import contextmanager
+from subprocess import PIPE, CalledProcessError, Popen
 
 import requests
 
@@ -37,3 +39,18 @@ def download_apk_file(url):
         shutil.copyfileobj(resp.raw, f)
     logger.info('downloaded file %s', path)
     return path
+
+def read_file_content(fn):
+    with open(fn, 'r') as fp:
+        return fp.read()
+
+def shell(cmd, inputdata=None, **kw):
+    logger.info('calling "%s" in %s', cmd, kw.get('cwd', os.getcwd()))
+    kw['shell'] = not isinstance(cmd, list)
+    kw['stdin'] = PIPE if inputdata else None
+    p = Popen(cmd, **kw)
+    if inputdata:
+        p.communicate(inputdata)
+    p.wait()
+    if p.returncode:
+        raise CalledProcessError(p.returncode, cmd)

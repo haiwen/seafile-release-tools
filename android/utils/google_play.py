@@ -1,5 +1,5 @@
-from apiclient.discovery import build # pylint:disable=import-error
 import httplib2
+from apiclient.discovery import build  # pylint:disable=import-error
 from oauth2client import client
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -32,7 +32,7 @@ def google_play_upload(apk_file, package_name, json_keyfile, changelog=''):
             editId=edit_id, packageName=package_name,
             media_body=apk_file).execute()
 
-        print 'Version code %d has been uploaded' % apk_response['versionCode']
+        print('Version code %d has been uploaded' % apk_response['versionCode'])
 
         track_response = service.edits().tracks().update(
             editId=edit_id,
@@ -40,20 +40,20 @@ def google_play_upload(apk_file, package_name, json_keyfile, changelog=''):
             packageName=package_name,
             body={u'versionCodes': [apk_response['versionCode']]}).execute()
 
-        print 'Track %s is set for version code(s) %s' % (
-            track_response['track'], str(track_response['versionCodes']))
+        print('Track %s is set for version code(s) %s' % (
+            track_response['track'], str(track_response['versionCodes'])))
 
         listing_response = service.edits().apklistings().update(
             editId=edit_id, packageName=package_name, language='en-US',
             apkVersionCode=apk_response['versionCode'],
             body={'recentChanges': changelog}).execute()
 
-        print 'Listing for language %s was updated.' % listing_response['language']
+        print('Listing for language %s was updated.' % listing_response['language'])
 
         commit_request = service.edits().commit(
             editId=edit_id, packageName=package_name).execute()
 
-        print 'Edit "%s" has been committed' % (commit_request['id'])
+        print('Edit "%s" has been committed' % (commit_request['id']))
 
     except client.AccessTokenRefreshError:
         print(

@@ -25,7 +25,7 @@ def send_slack_msg(message, channel=None, at_users='', botname='slackbot', color
 
     headers = {'Content-Type': 'application/json'}
     msg = ''
-    if isinstance(at_users, basestring):
+    if isinstance(at_users, str):
         at_users = at_users.split(',')
     for u in at_users:
         msg += "<@{}> ".format(u)

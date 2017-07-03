@@ -12,27 +12,25 @@ Workflow:
 """
 
 import argparse
-import base64
-import os
-from os.path import abspath, basename, exists, dirname, join
 import logging
+import os
+from os.path import abspath, basename, dirname, exists, join
 
-from utils import setup_logging, download_apk_file
-from utils.google_play import get_google_play_latest_release, google_play_upload
-from utils.github import get_github_version_info
-from utils.qiniu_helper import QiniuClient
-from utils.slack_notify import send_slack_msg
+from android.utils import download_apk_file, setup_logging
+from android.utils.github import get_github_version_info
+from android.utils.google_play import get_google_play_latest_release, google_play_upload
+from android.utils.keys_utils import get_keyfile
+from android.utils.qiniu_helper import QiniuClient
+from android.utils.slack_notify import send_slack_msg
 
 logger = logging.getLogger(__file__)
-
-DEFAULT_JSON_KEYFILE = join(dirname(abspath(__file__)), 'google-api-key.json')
 
 def parse_args():
     argparser = argparse.ArgumentParser(add_help=False)
     argparser.add_argument(
         '--json-keyfile',
         help='The json file that contains the key to auth with google api',
-        default=DEFAULT_JSON_KEYFILE,
+        default=get_keyfile('google-api-key.json'),
     )
     argparser.add_argument(
         '--package-name',

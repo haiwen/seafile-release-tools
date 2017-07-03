@@ -54,3 +54,8 @@ docs/_build/
 
 # Custom
 google-api-key.json
+
+*key.properties
+*.keystore
+keys/
+*.tar.gz
