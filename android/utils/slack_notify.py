@@ -7,7 +7,7 @@ import os
 
 import requests
 
-def send_slack_msg(message, channel=None, at_users='', botname='slackbot', color='good'):
+def send_slack_msg(message, channel=None, at_users='', botname='slackbot', color='good', blocktext=''):
     """Send an audit log to Slack
 
     color can be "good", "warning", "danger" or any hex color code (#AABBCC)
@@ -35,11 +35,18 @@ def send_slack_msg(message, channel=None, at_users='', botname='slackbot', color
         'username': botname,
         'icon_emoji': ':chicken:',
         'channel': '#' + channel.strip('#'),
-        'attachments': [
-            {'text': msg,
-             'color': color},
-        ],
     }
+    # See https://api.slack.com/docs/messages/builder for slack message attachments spec
+    if blocktext:
+        attachments = [{
+            'color': color,
+            'pretext': msg,
+            'text': blocktext,
+        }]
+    else:
+        attachments = [{'text': msg, 'color': color}]
+
+    params['attachments'] = attachments
     r = requests.post(url, data=json.dumps(params), headers=headers)
     r.raise_for_status()
 

@@ -12,7 +12,7 @@ class OSSUploader(object):
         access_key_id = os.environ['OSS_ACCESS_KEY_ID']
         access_key_secret = os.environ['OSS_ACCESS_KEY_SECRET']
 
-        self.endpoint = os.environ.get('OSS_ENDPOINT', 'http://oss-cn-shanghai.aliyuncs.com')
+        self.endpoint = os.environ.get('OSS_ENDPOINT', 'https://oss-cn-shanghai.aliyuncs.com')
         self.auth = Auth(access_key_id, access_key_secret)
         self.bucket_name = os.environ.get('OSS_BUCKET', 'seafile-downloads')
         self.bucket = Bucket(self.auth, self.endpoint, self.bucket_name)

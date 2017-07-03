@@ -16,6 +16,7 @@ The content in file changelog.md would be used as the releasae changelog.
 from __future__ import print_function
 
 import argparse
+import traceback
 import logging
 import os
 import re
@@ -54,8 +55,14 @@ def read_android_changelog():
     fn = join(dirname(abspath(__file__)), 'changelog.md')
     return read_file_content(fn)
 
-def notify_slack(msg):
-    send_slack_msg(msg, botname='seadroid-travis-builder')
+def notify_slack(msg, **kw):
+    send_slack_msg(msg, botname='seadroid-travis-builder', **kw)
+
+def get_travis_build_url():
+    build_id = os.environ.get('TRAVIS_BUILD_ID')
+    repo = os.environ.get('TRAVIS_REPO_SLUG')
+    if build_id and repo:
+        return f'https://travis-ci.org/{repo}/builds/{build_id}'
 
 def main():
     args = parse_args()
@@ -98,6 +105,8 @@ def main():
             notify_slack(msg)
 
         oss_uploader.upload_file(seadroid_tag)
+        msg = f'Seadroid <https://github.com/{args.repo}/releases/tag/{seadroid_tag}|{seadroid_tag}> has been published to OSS'
+        notify_slack(msg)
 
 if __name__ == '__main__':
     setup_logging()
@@ -106,4 +115,15 @@ if __name__ == '__main__':
         logger.info('running on travis ci')
     else:
         logger.info('running on local machine')
-    main()
+    try:
+        main()
+    except:
+        tag = os.environ.get('TRAVIS_TAG')
+        url = get_travis_build_url()
+        if url and tag:
+            msg = f'<{url}|seadroid release {tag}> build failed'
+        elif tag:
+            msg = f'seadroid release {tag} build failed'
+        else:
+            msg = 'seadroid build failed'
+        notify_slack(msg, blocktext=traceback.format_exc(), color='warning')
