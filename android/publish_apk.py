@@ -23,7 +23,7 @@ from android.utils.keys_utils import get_keyfile
 from android.utils.qiniu_helper import QiniuClient
 from android.utils.slack_notify import send_slack_msg
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 def parse_args():
     argparser = argparse.ArgumentParser(add_help=False)

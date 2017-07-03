@@ -6,7 +6,7 @@ from android.utils.google_play import get_google_play_latest_release, google_pla
 from android.utils.keys_utils import get_keyfile
 from android.utils.slack_notify import send_slack_msg
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 def notify_slack(msg):
     send_slack_msg(msg, botname='android-travis-upload')

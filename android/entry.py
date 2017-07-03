@@ -24,11 +24,12 @@ from os.path import abspath, basename, dirname, exists, join
 
 from android.builder import APKBuilder
 from android.googleplay_uploader import GooglePlayUploader
+from android.oss_uploader import OSSUploader
 from android.releaser import GithubReleaser
 from android.utils import read_file_content, setup_logging
 from android.utils.slack_notify import send_slack_msg
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 PRE_RELEASE_PATTERN = re.compile('^android-([0-9.]+)-pre$')
 PROD_RELEASE_PATTERN = re.compile('^android-([0-9.]+)$')
@@ -88,11 +89,15 @@ def main():
         notify_slack(msg)
     else:
         logger.info(f'going to release {seadroid_tag} and upload it to google play')
-        releaser.mark_as_prod(seadroid_tag)
         google_uploader = GooglePlayUploader()
+        oss_uploader = OSSUploader()
+
+        releaser.mark_as_prod(seadroid_tag)
         if google_uploader.upload(seadroid_tag, args.package_name):
             msg = f'Seadroid <https://github.com/{args.repo}/releases/tag/{seadroid_tag}|{seadroid_tag}> has been published to Google Play'
             notify_slack(msg)
+
+        oss_uploader.upload_file(seadroid_tag)
 
 if __name__ == '__main__':
     setup_logging()

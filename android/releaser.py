@@ -12,7 +12,7 @@ import requests
 from android.utils.keys_utils import read_key_file
 from android.utils.rest import RestClient
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 class GithubApi(RestClient):
     def __init__(self, user, token, repo):

@@ -8,7 +8,7 @@ from subprocess import PIPE, CalledProcessError, Popen
 
 import requests
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 def setup_logging(level=logging.INFO):
     kw = {
