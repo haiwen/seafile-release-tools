@@ -37,7 +37,7 @@ PROD_RELEASE_PATTERN = re.compile('^android-([0-9.]+)$')
 
 def parse_args():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--repo', default='lins05/seadroid')
+    ap.add_argument('--repo', default='haiwen/seadroid')
     ap.add_argument(
         '--package-name',
         default='com.seafile.seadroid2',
