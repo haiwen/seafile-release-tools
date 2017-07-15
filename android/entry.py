@@ -113,9 +113,7 @@ def _real_main(travis_tag):
         oss_uploader = OSSUploader()
 
         releaser.mark_as_prod(seadroid_tag)
-        if google_uploader.upload(seadroid_tag, args.package_name):
-            msg = f'Seadroid <https://github.com/{args.repo}/releases/tag/{seadroid_tag}|{seadroid_tag}> has been published to Google Play'
-            notify_slack(msg)
+        google_uploader.upload(seadroid_tag, args.package_name)
 
         oss_uploader.upload_file(seadroid_tag)
         msg = f'Seadroid <https://github.com/{args.repo}/releases/tag/{seadroid_tag}|{seadroid_tag}> has been published to OSS'
