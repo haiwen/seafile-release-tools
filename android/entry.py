@@ -78,6 +78,7 @@ def main():
         else:
             msg = 'seadroid build failed'
         notify_slack(msg, blocktext=traceback.format_exc(), color='warning')
+        raise
 
 def _real_main(travis_tag):
     args = parse_args()
