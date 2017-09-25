@@ -1,3 +1,4 @@
+from __future__ import print_function
 import re
 import requests
 
@@ -20,7 +21,10 @@ def get_github_version_info(version=None):
     """
     Returns a four tuple of (version, version_code, changelog, download_url)
     """
-    releases = requests.get('https://api.github.com/repos/haiwen/seadroid/releases').json()
+    resp = requests.get('https://api.github.com/repos/haiwen/seadroid/releases')
+    resp.raise_for_status()
+    releases = resp.json()
+    print('releases json:', releases)
     if not version:
         ret = releases[0]
     else:
