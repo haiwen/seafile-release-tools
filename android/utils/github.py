@@ -6,10 +6,10 @@ def _get_version_code(tag):
     """
     Get the android app version code from AndroidManifest.xml"
     """
-    url = 'https://raw.githubusercontent.com/haiwen/seadroid/{}/app/src/main/AndroidManifest.xml'.format(tag)
+    url = 'https://raw.githubusercontent.com/haiwen/seadroid/{}/app/build.gradle'.format(tag)
     content = requests.get(url).text
-    # android:versionCode="60"
-    pattern = re.compile(r'android:versionCode="(\d+)"')
+    # versionCode 74
+    pattern = re.compile(r'versionCode (\d+)')
     for line in content.splitlines():
         m = re.search(pattern, line)
         if m:
