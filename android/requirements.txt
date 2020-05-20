@@ -5,16 +5,16 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 crcmod==1.7               # via oss2
-google-api-python-client==1.5.1
-httplib2==0.9.2           # via google-api-python-client, oauth2client
-oauth2client==2.2.0
-oss2==2.3.3
+google-api-python-client==1.5.1  # via -r requirements.in
+httplib2==0.18.0          # via google-api-python-client, oauth2client
+oauth2client==2.2.0       # via -r requirements.in, google-api-python-client
+oss2==2.3.3               # via -r requirements.in
 pyasn1-modules==0.0.8     # via oauth2client
 pyasn1==0.1.9             # via oauth2client, pyasn1-modules, rsa
-qiniu==7.0.4
-requests==2.9.1
+qiniu==7.0.4              # via -r requirements.in
+requests==2.9.1           # via -r requirements.in, oss2, qiniu
 rsa==3.4.2                # via oauth2client
 simplejson==3.11.1        # via uritemplate
 six==1.10.0               # via google-api-python-client, oauth2client, tenacity
-tenacity==5.0.2
+tenacity==5.0.2           # via -r requirements.in
 uritemplate==0.6          # via google-api-python-client
